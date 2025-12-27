@@ -1,14 +1,13 @@
-import React from "react";
-import IconButton from "@mui/material/IconButton";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import Divider from "@mui/material/Divider";
-import { Icon } from "@iconify/react";
+import React from 'react';
+import IconButton from '@mui/material/IconButton';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Divider from '@mui/material/Divider';
 
 const ThreeDotMenu = ({
   items = [], // array of menu items
   onSelect = () => {}, // callback to parent
-  icon = "⁝", // default icon
+  icon = '⁝', // default icon
   disabled = false,
 }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -28,8 +27,8 @@ const ThreeDotMenu = ({
       <IconButton
         onClick={handleOpen}
         style={{
-          height: "30px",
-          width: "30px",
+          height: '30px',
+          width: '30px',
         }}
         disabled={disabled}
       >
@@ -38,7 +37,7 @@ const ThreeDotMenu = ({
 
       <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
         {items.map((item, index) => (
-          <React.Fragment key={index}>
+          <div key={index}>
             <MenuItem
               disabled={item.disabled}
               onClick={() => handleClick(item)} // return clicked item
@@ -48,7 +47,7 @@ const ThreeDotMenu = ({
             </MenuItem>
 
             {item.divider && <Divider />}
-          </React.Fragment>
+          </div>
         ))}
       </Menu>
     </>

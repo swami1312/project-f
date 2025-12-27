@@ -10,6 +10,7 @@ const apiEndPoints = {
   // retailers orders
   postRetailerOrder: () => `${baseUrl}/api-order/place/order`,
   getAllRetailersOrders: () => `${baseUrl}/api-order/orders`,
+  postPdf: () => `${baseUrl}/upload`,
 };
 
 export default apiEndPoints;
