@@ -9,6 +9,7 @@ import Inventory from "./pages/Inventory/Inventory";
 import AdminProducts from "./pages/AdminProducts/AdminProducts";
 import RetailerOrders from "./pages/RetailerOrders/RetailerOrders";
 import { Bounce, ToastContainer } from "react-toastify";
+import AdminProducts2 from "./pages/AdminProducts2/AdminProducts2";
 
 const App = () => {
   const [activePage, setActivePage] = useState("inventory");
@@ -35,12 +36,14 @@ const App = () => {
         {/* {activePage === "customers" && <CustomersPage />} */}
         {activePage === "generate-invoice" && <GenerateInvoice />}
         {activePage === "admin-1" && <AdminProducts />}
+        {activePage === "admin-2" && <AdminProducts2 />}
         {activePage === "user-inventory" && <Inventory />}
         {![
           "user-orders",
           "generate-invoice",
           "user-inventory",
           "admin-1",
+          "admin-2",
         ].includes(activePage) && <PlaceholderPage title={activePage} />}
       </main>
     </div>

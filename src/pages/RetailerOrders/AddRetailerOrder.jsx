@@ -65,32 +65,34 @@ const AddRetailerOrder = ({ setOpen, getapi }) => {
     //     }
     //   ]
     // }
+    console.log(data);
 
     const payload = {
       orderItemsRequestList: data.product.map((productId) => ({
         productId: productId,
+        // productName: productName,
         quantity: 1,
       })),
       totalAmount: data.amount,
       retailerId: "R-0001",
       stateId: data.state,
     };
-    console.log(payload);
+    // console.log(payload);
 
-    post({
-      apiUrl: apiEndPoints.postRetailerOrder(),
-      apiDispatch: postinventoryDispatch,
-      body: payload,
-      callBackFunction: (res) => {
-        if (res.success) {
-          toast.success("Order created successfully");
-          setOpen(false);
-          getapi();
-        } else {
-          toast.error(res.message || "Failed to create order");
-        }
-      },
-    });
+    // post({
+    //   apiUrl: apiEndPoints.postRetailerOrder(),
+    //   apiDispatch: postinventoryDispatch,
+    //   body: payload,
+    //   callBackFunction: (res) => {
+    //     if (res.success) {
+    //       toast.success("Order created successfully");
+    //       setOpen(false);
+    //       getapi();
+    //     } else {
+    //       toast.error(res.message || "Failed to create order");
+    //     }
+    //   },
+    // });
   };
 
   // ✅ Fetch States & Products

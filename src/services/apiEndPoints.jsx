@@ -11,6 +11,9 @@ const apiEndPoints = {
   postRetailerOrder: () => `${baseUrl}/api-order/place/order`,
   getAllRetailersOrders: () => `${baseUrl}/api-order/orders`,
   postPdf: () => `${baseUrl}/upload`,
+
+  //admin 2
+  getretailerLh: () => `${baseUrl}/api/retailer/lh`,
 };
 
 export default apiEndPoints;

@@ -1,7 +1,7 @@
 import { TableRow } from "../../components/Table/Table";
 
 const EachRetailerOrder = ({ item, index }) => {
-  console.log("first");
+  console.log(item.orderItemsRequestList);
   return (
     <>
       <TableRow
@@ -9,7 +9,11 @@ const EachRetailerOrder = ({ item, index }) => {
         elements={[
           index + 1,
           item.stateId,
-          item?.productId || "--",
+          item?.orderItemsRequestList?.length
+            ? item.orderItemsRequestList
+                .map((eachProduct) => eachProduct?.productId)
+                .join(", ")
+            : "--",
           item?.totalAmount || "--",
           item?.date || "--",
         ]}
