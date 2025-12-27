@@ -5,6 +5,7 @@ const apiEndPoints = {
   getStatesList: () => `${baseUrl}/api-state/state`,
   getProductsList: () => `${baseUrl}/api-product/products`,
   getProductLockReqs: () => `${baseUrl}/api/v1/inventory`,
+  postInventory: () => `${baseUrl}/api/v1/inventory`,
 };
 
 export default apiEndPoints;

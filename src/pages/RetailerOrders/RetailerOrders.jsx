@@ -11,7 +11,7 @@ import axios from "axios";
 import AddInventory from "./AddInventory";
 const baseUrl = import.meta.env.APP_API_URL;
 
-const Inventory = () => {
+const RetailerOrders = () => {
   const [apiState, apiDispatch] = useReducer(apiReducer, initialState);
 
   const { get } = useApiServices();
@@ -36,7 +36,7 @@ const Inventory = () => {
 
   return (
     <div>
-      <Header title="Inventory" />
+      <Header title="Retailer Orders" />
       <div className="flex flex-col items-end mb-2">
         <Button text="Add" type="submit" onClick={toggleDrawer(true)} />
       </div>
@@ -62,4 +62,4 @@ const Inventory = () => {
   );
 };
 
-export default Inventory;
+export default RetailerOrders;
