@@ -1,0 +1,45 @@
+.text-input {
+  height: 40px;
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  font-size: 16px;
+  border-radius: 5px;
+  outline: none;
+  color: var(--input-color);
+  border: 1px solid var(--input-border-color);
+}
+.text-input::placeholder {
+  color: var(--input-border-color);
+  opacity: 1;
+}
+
+.search-input {
+  height: 40px;
+  padding: 10px 20px;
+  box-sizing: border-box;
+  font-size: 14px;
+  border-radius: 5px;
+  outline: none;
+  border: 1px solid var(--input-border-color);
+  color: var(--input-color);
+  transition: all 0.4s ease;
+  &:focus {
+    box-shadow: 0 0 0 0.25rem rgba(255, 122, 17, 0.25);
+    border: 1px solid var(--font-color);
+    background-color: rgba(255, 253, 247, 0.793);
+  }
+}
+
+.checkbox-input {
+  /* size & basic look */
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  transition: all 0.1s ease; /* simple pop animation */
+}
+
+/* grow / shrink on toggle */
+.checkbox-input {
+  transform: scale(1.15);
+}

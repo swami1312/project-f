@@ -1,0 +1,150 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --theme-color: #111827;
+  --text-color: #6d7e8b;
+  --pending: #efa400;
+  --approved: #2ea75e;
+  --orange-light: #fff9f5;
+  --border-color: #dde6ed;
+  --border-color2: #bbbaba;
+  --icon-color: #868fa0;
+  --but-border-color: #dde6ed;
+  --table-color: #718391;
+  --table-header-color: #1b1b1b;
+  --card-border: #c8c8c8;
+  --popup-bg: #fbfbfb;
+  --light-color: #ffffff;
+  --dark-color: #000000;
+  --error-color: red;
+  --bg-border-color: #fff;
+  --input-bg: #e0e0e0;
+  --form-text: #333;
+  --active-button: #ffe5d4;
+  --form-bg: #fafafa;
+  --card-bg-color: #fafafa;
+  --tab-color: #515151;
+  --tab-inactive-color: #989898;
+  --gray-color-one: #545454;
+  --btn-bg: #d3d3d3;
+  --btn-hov-bg: #ff9800;
+  --icon-color2: #a4abb8;
+  --tab-text-color: #515151;
+  --tab-bg-color: #fed5b9;
+}
+
+html {
+  font-family: "Poppins", sans-serif;
+  box-sizing: border-box;
+}
+
+.tab-button {
+  font-weight: 400;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  color: #6f6f6fb2;
+}
+
+.tab-active {
+  background-color: var(--tab-bg-color);
+  color: var(--tab-text-color);
+  border-bottom: 3px solid var(--theme-color);
+  font-weight: 500;
+}
+
+.tab-inactive {
+  background-color: transparent;
+  border-bottom: 3px solid transparent;
+}
+
+.status-badge-pending {
+  background-color: #fff3e0;
+  color: #f57c00;
+  border: 1px solid #ffe0b2;
+}
+
+.status-badge-approved {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+}
+
+.status-badge-rejected {
+  background-color: #ffebee;
+  color: #c62828;
+  border: 1px solid #ffcdd2;
+}
+
+.filter-badge.red {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.action-link {
+  color: var(--theme-color);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.action-link:hover {
+  text-decoration: underline;
+}
+
+.search-input {
+  padding: 8px 12px 8px 36px;
+  border: 1px solid #e5e7eb;
+  border-radius: 22px;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s ease;
+  height: 36px;
+}
+
+.search-input:focus {
+  border-color: #030303;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+}
+.pagination-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pagination-btn:hover {
+  background-color: #f0f0f0;
+}
+
+.pagination-btn.active {
+  background-color: var(--theme-color);
+  color: white;
+}
+
+.filter-badge {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-badge.green {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.filter-badge.yellow {
+  background-color: #fff3e0;
+  color: #f57c00;
+}
+
+.filter-badge:hover {
+  opacity: 0.8;
+}
