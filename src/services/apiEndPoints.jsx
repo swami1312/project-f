@@ -6,6 +6,7 @@ const apiEndPoints = {
   getProductsList: () => `${baseUrl}/api-product/products`,
   getProductLockReqs: () => `${baseUrl}/api/v1/inventory`,
   postInventory: () => `${baseUrl}/api/v1/inventory`,
+  postPdf: () => `${baseUrl}/upload`,
 };
 
 export default apiEndPoints;
