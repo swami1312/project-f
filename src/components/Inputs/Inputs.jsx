@@ -317,6 +317,7 @@ export const CustomMultiSelect = ({
   multiple = true,
   showCheckbox = true,
   direction,
+  maxWidth,
 }) => {
   // ✅ Normalize items
   const normalizedItems = React.useMemo(() => {
@@ -348,7 +349,7 @@ export const CustomMultiSelect = ({
 
       <FormControl
         size={size}
-        sx={{ minWidth: width, ...formControlSx }}
+        sx={{ minWidth: width, ...formControlSx, maxWidth: maxWidth }}
         error={!!errormsg}
       >
         <Select
@@ -391,9 +392,8 @@ export const CustomMultiSelect = ({
             </MenuItem>
           ))}
         </Select>
-
-        {errormsg && <ErrorMsg>{errormsg}</ErrorMsg>}
       </FormControl>
+      {errormsg && <ErrorMsg>{errormsg}</ErrorMsg>}
     </InputContainer>
   );
 };

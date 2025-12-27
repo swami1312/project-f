@@ -6,7 +6,7 @@ const Header = ({ title, user }) => {
 
   const defaultUser = {
     name: "Manohar",
-    email: "kris.evans@gmail.com",
+    email: "Manohar@gmail.com",
     avatar: "https://i.pravatar.cc/150?img=32",
   };
 
