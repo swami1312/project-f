@@ -8,9 +8,11 @@ const EachInventory = ({ item, index }) => {
         key={item.id}
         elements={[
           index + 1,
-          item.vehicleType,
-          item?.gst || "--",
-          item?.hsnCode || "--",
+          item.stateId,
+          item?.productId || "--",
+          item?.quantity || "--",
+          item?.date || "--",
+          item?.status || "--",
         ]}
       />
     </>

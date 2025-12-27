@@ -14,10 +14,14 @@ import useApiServices from "../../services/apiServices";
 import apiEndPoints from "../../services/apiEndPoints";
 import { toast } from "react-toastify";
 
-const AddInventory = () => {
+const AddInventory = ({ setOpen, getapi }) => {
   const { get, post } = useApiServices();
   const [states, statesDispatch] = useReducer(apiReducer, initialState);
   const [products, productsDispatch] = useReducer(apiReducer, initialState);
+  const [postinventoryState, postinventoryDispatch] = useReducer(
+    apiReducer,
+    initialState
+  );
 
   // ✅ Validation Schema
   const schema = Yup.object().shape({
@@ -44,14 +48,28 @@ const AddInventory = () => {
   });
 
   const onSubmit = (data) => {
+    //     "productId": "string",
+    // "quantity": 0,
+    // "retailerId": "string",
+    // "stateId": "string",
+    // "status": "string"
+
+    const payload = {
+      productId: data.product,
+      quantity: data.quantity,
+      retailerId: "R-0001",
+      stateId: data.state,
+      status: "Pending",
+    };
     post({
       apiUrl: apiEndPoints.postInventory(),
-      apiDispatch: postApiDispatch,
+      apiDispatch: postinventoryDispatch,
       body: payload,
       callBackFunction: (res) => {
-        console.log(res);
         if (res.success) {
           alert("updoaded");
+          setOpen(false);
+          getapi();
           // toast.success(res.message);
         } else {
           // toast.warn(res.message);
