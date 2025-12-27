@@ -1,13 +1,9 @@
-import { Icon } from "@iconify/react";
-import { toast } from "react-toastify";
-import { iconifyIcons } from "../Utils/constants";
+import { toast } from 'react-toastify';
 
 const useHandleResponse = () => {
   const handleResponse = (response, callbackObj) => {
     if (response.success === true) {
-      toast.success(response.message, {
-        icon: <Icon icon={iconifyIcons.tick} height={20} />,
-      });
+      toast.success(response.message);
       callbackObj && callbackObj.success && callbackObj.success();
     } else {
       toast.error(response.message);

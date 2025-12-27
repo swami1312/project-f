@@ -25,7 +25,7 @@ const App = () => {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme="light"
+        // theme="light"
         transition={Bounce}
       />
       <main className="flex-1 ml-52 p-8">
