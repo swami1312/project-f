@@ -7,7 +7,7 @@ import useApiServices from '../../services/apiServices';
 import apiEndPoints from '../../services/apiEndPoints';
 import useHandleResponse from '../../Hooks/useHandleResponse';
 
-const InventoryForm = () => {
+const InventoryForm = React.forwardRef((_, ref) => {
   const [start, setStart] = React.useState('');
   const [end, setEnd] = React.useState('');
   const [errors, setErrors] = React.useState({});
@@ -82,6 +82,7 @@ const InventoryForm = () => {
       },
     });
   };
+  React.useImperativeHandle(ref, () => inventory);
 
   return (
     <>
@@ -140,9 +141,14 @@ const InventoryForm = () => {
                   </td>
 
                   <td>
-                    <IconButton size="small">
-                      <Icon icon="" />
-                    </IconButton>
+                    {row.pdf ? (
+                      <Icon
+                        icon="hugeicons:tick-01"
+                        className="inline text-[#057823] text-[20px]"
+                      />
+                    ) : (
+                      '---'
+                    )}
                   </td>
                 </tr>
               ))}
@@ -152,6 +158,6 @@ const InventoryForm = () => {
       )}
     </>
   );
-};
+});
 
 export default InventoryForm;
