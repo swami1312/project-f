@@ -7,6 +7,7 @@ import apiEndPoints from "../../services/apiEndPoints";
 import Popup from "../../components/Popups/Popup";
 import ThreeDotMenu from "./../../components/ThreeDotMenu/ThreeDotMenu";
 import InventoryForm2 from "./InventoryForm2";
+import useRouteInformation from "../../Hooks/useRouteInformation";
 
 const EachItem = ({ item }) => {
   const [showPopup, setPopup] = useState(false);
@@ -56,12 +57,17 @@ const EachItem = ({ item }) => {
 const AdminProducts2 = () => {
   const [apiState, apiDispatch] = useReducer(apiReducer, initialState);
   const { get } = useApiServices();
+  const { queryParams } = useRouteInformation();
 
   const headers = ["Id", "State", "Qty", "Date", "Status", "Tenant", "Act"];
 
   const getReqs = () => {
     get({
-      apiUrl: apiEndPoints.getProductLockReqs(),
+      apiUrl: apiEndPoints.getProductLockReqs({
+        status: "ADDED-INV",
+        page: queryParams.page || 0,
+        size: 20,
+      }),
       apiDispatch,
     });
   };

@@ -61,22 +61,22 @@ const AddRetailerOrder = ({ setOpen, getapi }) => {
     //   "orderItemsRequestList": [
     //     {
     //       "productId": "string",
+
     //       "quantity": 0
     //     }
     //   ]
     // }
 
     const payload = {
-      orderItemsRequestList: data.product.map((productId) => ({
-        productId: productId,
-        // productName: productName,
+      orderItemsRequestList: data.product.map((eachProduct) => ({
+        productId: eachProduct.id,
+        productName: eachProduct.productName,
         quantity: 1,
       })),
       totalAmount: data.amount,
       retailerId: "R-0001",
       stateId: data.state,
     };
-    // console.log(payload);
 
     post({
       apiUrl: apiEndPoints.postRetailerOrder(),
@@ -145,9 +145,20 @@ const AddRetailerOrder = ({ setOpen, getapi }) => {
                 items={products?.data?.data?.content || []}
                 keyValuePair={["id", "productName"]}
                 placeholder="Select Products"
-                value={field.value}
+                value={field.value?.map((p) => p.id) || []} // 👈 show selected ids
                 multiple={true}
-                onChange={(e) => field.onChange(e.target.value)}
+                onChange={(e) => {
+                  const selectedIds = e.target.value;
+
+                  const selectedProducts = products?.data?.data?.content
+                    ?.filter((item) => selectedIds.includes(item.id))
+                    .map((item) => ({
+                      id: item.id,
+                      productName: item.productName,
+                    }));
+
+                  field.onChange(selectedProducts);
+                }}
                 errormsg={errors.product?.message}
                 width="200px"
                 maxWidth="200px"

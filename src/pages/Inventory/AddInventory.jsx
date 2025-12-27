@@ -59,7 +59,7 @@ const AddInventory = ({ setOpen, getapi }) => {
       quantity: data.quantity,
       retailerId: "R-0001",
       stateId: data.state,
-      status: "Pending",
+      status: "PENDING",
     };
     post({
       apiUrl: apiEndPoints.postInventory(),
@@ -138,7 +138,8 @@ const AddInventory = ({ setOpen, getapi }) => {
                 multiple={false}
                 onChange={(e) => field.onChange(e.target.value)}
                 errormsg={errors.product?.message}
-                width={"200px"}
+                width="200px"
+                maxWidth="200px"
               />
             )}
           />
