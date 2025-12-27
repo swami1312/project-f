@@ -5,6 +5,7 @@ import { TableComponent } from '../../components/Table/Table';
 import { Icon } from '@iconify/react';
 import useApiServices from '../../services/apiServices';
 import apiEndPoints from '../../services/apiEndPoints';
+import useHandleResponse from '../../Hooks/useHandleResponse';
 
 const InventoryForm = () => {
   const [start, setStart] = React.useState('');
@@ -13,6 +14,7 @@ const InventoryForm = () => {
   const [inventory, setInventory] = React.useState([]);
   const fileFormData = React.useRef(null);
   const { post } = useApiServices();
+  const { handleResponse } = useHandleResponse();
 
   const validate = () => {
     const newErrors = {};
@@ -68,13 +70,15 @@ const InventoryForm = () => {
       type: 'file',
       body: fileFormData,
       callBackFunction: (res) => {
-        if (res.success === true) {
-          setInventory((prev) =>
-            prev.map((item) =>
-              item.id === id ? { ...item, pdf: res.data } : item
-            )
-          );
-        }
+        handleResponse(res, {
+          success: () => {
+            setInventory((prev) =>
+              prev.map((item) =>
+                item.id === id ? { ...item, pdf: res.data } : item
+              )
+            );
+          },
+        });
       },
     });
   };
