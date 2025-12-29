@@ -1,52 +1,49 @@
-import { useState } from "react";
-import Sidebar from "./layouts/Sidebar";
+import { Navigate, Route, Routes } from "react-router-dom";
 import DashboardPage from "./pages/DashboardPage";
-import OrdersPage from "./pages/OrdersPage";
-import CustomersPage from "./pages/CustomersPage";
-import PlaceholderPage from "./pages/PlaceholderPage";
+import RetailerOrders from "./pages/RetailerOrders/RetailerOrders";
 import GenerateInvoice from "./pages/GenerateInvoice/GenerateInvoice";
 import Inventory from "./pages/Inventory/Inventory";
 import AdminProducts from "./pages/AdminProducts/AdminProducts";
-import RetailerOrders from "./pages/RetailerOrders/RetailerOrders";
-import { Bounce, ToastContainer } from "react-toastify";
 import AdminProducts2 from "./pages/AdminProducts2/AdminProducts2";
+import PlaceholderPage from "./pages/PlaceholderPage";
+import AppLayout from "./layouts/AppLayout";
+import useRouteInformation from "./Hooks/useRouteInformation";
+import InventoryForm from "./pages/AdminProducts/InventoryForm";
+import ViewInventoryForm from "./pages/AdminProducts2/ViewInventoryForm";
 
 const App = () => {
-  const [activePage, setActivePage] = useState("inventory");
-
+  const { pathname } = useRouteInformation();
   return (
-    <div className="flex min-h-screen bg-amber-50/30">
-      <Sidebar activePage={activePage} onNavigate={setActivePage} />
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick={false}
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        // theme="light"
-        transition={Bounce}
-      />
-      <main className="flex-1 ml-52 p-8">
-        {/* {activePage === "dashboard" && <DashboardPage />} */}
-        {activePage === "user-orders" && <RetailerOrders />}
-        {/* {activePage === "customers" && <CustomersPage />} */}
-        {activePage === "generate-invoice" && <GenerateInvoice />}
-        {activePage === "admin-1" && <AdminProducts />}
-        {activePage === "admin-2" && <AdminProducts2 />}
-        {activePage === "user-inventory" && <Inventory />}
-        {![
-          "user-orders",
-          "generate-invoice",
-          "user-inventory",
-          "admin-1",
-          "admin-2",
-        ].includes(activePage) && <PlaceholderPage title={activePage} />}
-      </main>
-    </div>
+    <Routes>
+      {/* Layout wrapper */}
+      <Route element={<AppLayout />}>
+        <Route path="/" element={<Navigate to="/inventory" />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/user-orders" element={<RetailerOrders />} />
+        <Route path="/generate-invoice" element={<GenerateInvoice />} />
+        <Route path="/user-inventory" element={<Inventory />} />
+        <Route path="/admin/products-1" element={<AdminProducts />} />
+        <Route
+          path="/admin/products-1/add-inventory/:riID"
+          element={<InventoryForm />}
+        />
+        <Route path="/admin/products-2" element={<AdminProducts2 />} />
+        <Route
+          path="/admin/products-2/View-inventory/:riID"
+          element={<ViewInventoryForm />}
+        />
+
+        {/* Fallback */}
+        <Route
+          path="*"
+          element={
+            <PlaceholderPage
+              title={pathname.slice(1).replace(/^./, (c) => c.toUpperCase())}
+            />
+          }
+        />
+      </Route>
+    </Routes>
   );
 };
 

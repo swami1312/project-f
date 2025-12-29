@@ -9,23 +9,35 @@ import useApiServices from "../../services/apiServices";
 import apiEndPoints from "../../services/apiEndPoints";
 import axios from "axios";
 import AddInventory from "./AddInventory";
-const baseUrl = import.meta.env.APP_API_URL;
+import { userID } from "../../utils/functions";
+import useRouteInformation from "../../Hooks/useRouteInformation";
 
 const Inventory = () => {
   const [apiState, apiDispatch] = useReducer(apiReducer, initialState);
 
   const { get } = useApiServices();
+  const { queryParams } = useRouteInformation();
   const [open, setOpen] = React.useState(false);
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
   };
 
-  const headers = ["ID", "State", "Product", "Quantity", "Date", "Status"];
+  const headers = [
+    "ID",
+    "State Code",
+    "Product Code",
+    "Quantity",
+    "Date",
+    "Status",
+  ];
 
   const getAllVehicleType = () => {
     get({
-      apiUrl: apiEndPoints.getAllInventory(),
+      apiUrl: apiEndPoints.getUserInventory({
+        size: 20,
+        page: queryParams.page || 0,
+      }),
       apiDispatch,
     });
   };

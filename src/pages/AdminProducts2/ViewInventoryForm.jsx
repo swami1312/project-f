@@ -11,8 +11,10 @@ import useRouteInformation from "../../Hooks/useRouteInformation";
 import { apiReducer, initialState } from "../../services/apiReducer";
 import { toast } from "react-toastify";
 import { getDateYYYYMMDD } from "../../utils/functions";
+import { Link } from "react-router-dom";
+import Popup from "../../components/Popups/Popup";
 
-const InventoryForm = React.forwardRef((_, ref) => {
+const ViewInventoryForm = React.forwardRef((_, ref) => {
   const [updateState, updateDispatch] = React.useReducer(
     apiReducer,
     initialState
@@ -28,6 +30,10 @@ const InventoryForm = React.forwardRef((_, ref) => {
   const { post, get, put } = useApiServices();
   const { handleResponse } = useHandleResponse();
   const { pathParams } = useRouteInformation();
+  const [showPopup, setShowPopup] = React.useState(false);
+  const [decision, setDecision] = React.useState(""); // APPROVED / REJECTED
+  const [remarks, setRemarks] = React.useState("");
+  const [selectedID, setselectedID] = React.useState();
   const [data, setdata] = React.useState({
     id: "--",
     productId: "--",
@@ -37,6 +43,7 @@ const InventoryForm = React.forwardRef((_, ref) => {
     status: "-",
     date: "-",
   });
+  console.log(inventory);
 
   const validate = () => {
     const newErrors = {};
@@ -86,6 +93,109 @@ const InventoryForm = React.forwardRef((_, ref) => {
     }
   };
 
+  // Memoize the StatusPopup component to prevent unnecessary re-renders
+  const StatusPopup = React.useMemo(() => {
+    return ({ decision, setDecision, remarks, setRemarks }) => {
+      const handleDecisionChange = (e) => {
+        setDecision(e.target.value);
+      };
+
+      const handleRemarksChange = (e) => {
+        setRemarks(e.target.value);
+      };
+
+      return (
+        <div className="space-y-4">
+          {/* RADIO BUTTONS */}
+          <div className="flex gap-6">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="decision"
+                value="APPROVED"
+                checked={decision === "APPROVED"}
+                onChange={handleDecisionChange}
+              />
+              <span className="text-green-600 font-medium">Approve</span>
+            </label>
+
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="decision"
+                value="REJECTED"
+                checked={decision === "REJECTED"}
+                onChange={handleDecisionChange}
+              />
+              <span className="text-red-600 font-medium">Reject</span>
+            </label>
+          </div>
+
+          {/* TEXTAREA - Use controlled input with ref */}
+          <div
+            style={{
+              opacity: decision === "REJECTED" ? 1 : 0.7,
+              pointerEvents: decision === "REJECTED" ? "auto" : "none",
+            }}
+          >
+            <TextField
+              label="Rejection Reason"
+              placeholder="Enter rejection reason"
+              multiline
+              rows={4}
+              fullWidth
+              size="small"
+              value={remarks}
+              onChange={handleRemarksChange}
+              disabled={decision !== "REJECTED"}
+              sx={{
+                "& .MuiInputBase-root": {
+                  backgroundColor:
+                    decision === "REJECTED" ? "transparent" : "#f5f5f5",
+                },
+                "& .MuiInputBase-input": {
+                  color: decision === "REJECTED" ? "inherit" : "#999",
+                },
+              }}
+              helperText={
+                decision === "REJECTED"
+                  ? "Required for rejection"
+                  : "Only required when rejecting"
+              }
+            />
+          </div>
+        </div>
+      );
+    };
+  }, []); // Empty dependency array means this component is created once
+
+  const handleSubmitDecision = () => {
+    if (decision === "REJECTED" && !remarks.trim()) {
+      toast.error("Please enter rejection reason");
+      return;
+    }
+
+    submitDecisionApi();
+  };
+
+  const submitDecisionApi = () => {
+    put({
+      apiUrl: apiEndPoints.updateUserLh(selectedID, decision, {
+        remarks: decision === "REJECTED" ? remarks : "",
+      }),
+
+      callBackFunction: (res) => {
+        if (res.success) {
+          toast.success(`Inventory ${decision.toLowerCase()} successfully`);
+          setShowPopup(false);
+          setDecision("");
+          setRemarks("");
+          getuserLhApiCall();
+        }
+      },
+    });
+  };
+
   const fileupload = (fileFormData, id) => {
     post({
       apiUrl: apiEndPoints.postPdf({
@@ -121,9 +231,32 @@ const InventoryForm = React.forwardRef((_, ref) => {
       },
     });
   };
+  const getuserLhApiCall = () => {
+    get({
+      apiUrl: apiEndPoints.getUserLh({
+        status: "PENDING",
+        inventoryId: pathParams.riID,
+      }),
+      apiDispatch,
+      callBackFunction: (res) => {
+        if (res.success) {
+          setInventory(res.data.content);
+        }
+      },
+    });
+  };
+
   React.useEffect(() => {
     getEachProduct();
+    getuserLhApiCall();
   }, []);
+
+  // Clear remarks when decision changes from REJECTED to APPROVED
+  React.useEffect(() => {
+    if (decision === "APPROVED") {
+      setRemarks("");
+    }
+  }, [decision]);
 
   const submit = async () => {
     const uploadedItems = inventory.filter((item) => item.pdf);
@@ -177,9 +310,23 @@ const InventoryForm = React.forwardRef((_, ref) => {
     }
   };
 
+  // Create a memoized version of the popup content
+  const popupContent = React.useMemo(() => {
+    if (!showPopup) return null;
+
+    return (
+      <StatusPopup
+        decision={decision}
+        setDecision={setDecision}
+        remarks={remarks}
+        setRemarks={setRemarks}
+      />
+    );
+  }, [showPopup, decision, remarks, StatusPopup]);
+
   return (
     <div>
-      <Header title="Generate Inventory" />
+      <Header title="View Inventory" />
 
       <div className="max-w-jg rounded-xl border border-gray-200 bg-white shadow-md p-5 hover:shadow-lg transition mb-2">
         <div className="flex justify-between items-center mb-4">
@@ -232,43 +379,6 @@ const InventoryForm = React.forwardRef((_, ref) => {
         </div>
       </div>
 
-      <Box
-        display="flex"
-        alignItems="center"
-        justifyContent={"center"}
-        gap={2}
-        mb={2}
-        p={2}
-        sx={{
-          backgroundColor: "#ffffff",
-          borderRadius: "12px",
-          boxShadow: "0px 4px 12px rgba(0,0,0,0.08)",
-          border: "1px solid #e5e7eb",
-        }}
-      >
-        <TextField
-          label="Serial No Start"
-          type="number"
-          value={start}
-          onChange={(e) => setStart(e.target.value)}
-          error={!!errors.start}
-          helperText={errors.start}
-          size="small"
-        />
-
-        <TextField
-          label="Serial No End"
-          type="number"
-          value={end}
-          onChange={(e) => setEnd(e.target.value)}
-          error={!!errors.end}
-          helperText={errors.end}
-          size="small"
-        />
-
-        <Button onClick={handleGenerate} text="Generate" />
-      </Box>
-
       {/* Inventory List */}
       {inventory.length > 0 && (
         <div className="table-container max-h-[50vh]">
@@ -278,47 +388,81 @@ const InventoryForm = React.forwardRef((_, ref) => {
                 <th>Serial No</th>
                 <th>File</th>
                 <th>Status</th>
+                <th>Act</th>
               </tr>
             </thead>
 
             <tbody>
-              {inventory.map((row) => (
+              {inventory.map((row, index) => (
                 <tr key={row.id}>
-                  <td>{row.id}</td>
+                  <td>{row.retailerSerialNumber}</td>
 
                   <td>
-                    <IconButton size="small" component="label">
-                      <Icon icon="ep:upload-filled" width={20} />
-                      <input
-                        type="file"
-                        accept="application/pdf"
-                        hidden
-                        onChange={(e) => handlePdfUpload(e, row.id)}
-                      />
-                    </IconButton>{" "}
+                    <IconButton
+                      size="small"
+                      component="a"
+                      href={row.latterHeadImageUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Icon icon="catppuccin:pdf" width={20} />
+                    </IconButton>
                   </td>
 
                   <td>
-                    {row.pdf ? (
+                    {row.status === "PENDING" && (
+                      <Icon
+                        icon="hugeicons:time-02"
+                        className="inline text-yellow-500 text-[20px]"
+                      />
+                    )}
+
+                    {row.status === "APPROVED" && (
                       <Icon
                         icon="hugeicons:tick-01"
-                        className="inline text-[#057823] text-[20px]"
+                        className="inline text-green-600 text-[20px]"
                       />
-                    ) : (
-                      "---"
                     )}
+                    {row.status === "REJECTED" && (
+                      <Icon
+                        icon="hugeicons:cancel-01"
+                        className="inline text-red-600 text-[20px]"
+                      />
+                    )}
+                  </td>
+                  <td>
+                    <IconButton
+                      size="small"
+                      onClick={() => {
+                        setselectedID(row.id);
+                        setShowPopup(true);
+                      }}
+                    >
+                      <Icon icon="material-symbols:edit-outline" width={20} />
+                    </IconButton>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-          <div className="flex items-center justify-center mt-2">
-            <Button onClick={submit} text="Submit" />
-          </div>
         </div>
       )}
+      <Popup
+        open={showPopup}
+        title="Update Inventory Status"
+        content={popupContent}
+        primaryText="Submit"
+        secondaryText="Cancel"
+        onPrimary={handleSubmitDecision}
+        onSecondary={() => {
+          setShowPopup(false);
+          setDecision("");
+          setRemarks("");
+          setselectedID(null);
+        }}
+      />
     </div>
   );
 });
 
-export default InventoryForm;
+export default ViewInventoryForm;

@@ -9,13 +9,15 @@ import { Button } from "../../components/Buttons/Buttons";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
+
 import { apiReducer, initialState } from "../../services/apiReducer";
 import useApiServices from "../../services/apiServices";
 import apiEndPoints from "../../services/apiEndPoints";
 import { toast } from "react-toastify";
 
-const AddInventory = ({ setOpen, getapi }) => {
+const AddRetailerOrder = ({ setOpen, getapi }) => {
   const { get, post } = useApiServices();
+
   const [states, statesDispatch] = useReducer(apiReducer, initialState);
   const [products, productsDispatch] = useReducer(apiReducer, initialState);
   const [postinventoryState, postinventoryDispatch] = useReducer(
@@ -26,11 +28,15 @@ const AddInventory = ({ setOpen, getapi }) => {
   // ✅ Validation Schema
   const schema = Yup.object().shape({
     state: Yup.string().required("State is required"),
-    product: Yup.mixed().required("Product is required"),
-    quantity: Yup.number()
-      .required("Quantity is required")
-      .positive("Must be positive"),
-    // .integer("Must be a whole number"),
+
+    product: Yup.array()
+      .min(1, "At least one product is required")
+      .required("Product is required"),
+
+    amount: Yup.number()
+      .typeError("Amount must be a number")
+      .required("Amount is required")
+      .positive("Amount must be positive"),
   });
 
   const {
@@ -41,48 +47,60 @@ const AddInventory = ({ setOpen, getapi }) => {
     resolver: yupResolver(schema),
     defaultValues: {
       state: "",
-      product: "",
-      quantity: "",
+      product: [], // 👈 multi select needs array
+      amount: "",
     },
   });
 
+  // ✅ Submit Handler
+
   const onSubmit = (data) => {
-    //     "productId": "string",
-    // "quantity": 0,
-    // "retailerId": "string",
-    // "stateId": "string",
-    // "status": "string"
+    // {
+    //   "retailerId": "string",
+    //   "stateId": "string",
+    //   "orderItemsRequestList": [
+    //     {
+    //       "productId": "string",
+
+    //       "quantity": 0
+    //     }
+    //   ]
+    // }
 
     const payload = {
-      productId: data.product,
-      quantity: data.quantity,
+      orderItemsRequestList: data.product.map((eachProduct) => ({
+        productId: eachProduct.id,
+        productName: eachProduct.productName,
+        quantity: 1,
+      })),
+      totalAmount: data.amount,
       retailerId: "R-0001",
       stateId: data.state,
-      status: "PENDING",
     };
+
     post({
-      apiUrl: apiEndPoints.postInventory(),
+      apiUrl: apiEndPoints.postRetailerOrder(),
       apiDispatch: postinventoryDispatch,
       body: payload,
       callBackFunction: (res) => {
         if (res.success) {
+          toast.success("Order created successfully");
           setOpen(false);
           getapi();
-          toast.success(res.message);
         } else {
-          toast.warn(res.message);
-
-          //
+          toast.error(res.message || "Failed to create order");
         }
       },
     });
   };
 
+  // ✅ Fetch States & Products
   useEffect(() => {
     get({
       apiUrl: apiEndPoints.getStatesList(),
       apiDispatch: statesDispatch,
     });
+
     get({
       apiUrl: apiEndPoints.getProductsList(),
       apiDispatch: productsDispatch,
@@ -92,18 +110,13 @@ const AddInventory = ({ setOpen, getapi }) => {
   return (
     <div className="flex h-full">
       <div className="flex-1">
-        <p
-          className="text-center mb-auto 10px font-bold
+        <p className="text-center font-bold mb-4">Add User Order</p>
 
-"
-        >
-          Add User Inventory
-        </p>
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="bg-white rounded-xl shadow p-4 space-y-4"
         >
-          {/* State Select */}
+          {/* ✅ State Select */}
           <Controller
             name="state"
             control={control}
@@ -117,12 +130,12 @@ const AddInventory = ({ setOpen, getapi }) => {
                 onChange={(e) => field.onChange(e.target.value)}
                 errormsg={errors.state?.message}
                 multiple={false}
-                width={"200px"}
+                width="200px"
               />
             )}
           />
 
-          {/* Product Select */}
+          {/* ✅ Product Multi Select */}
           <Controller
             name="product"
             control={control}
@@ -130,11 +143,22 @@ const AddInventory = ({ setOpen, getapi }) => {
               <CustomMultiSelect
                 label="Product"
                 items={products?.data?.data?.content || []}
-                keyValuePair={["productCode", "productName"]}
-                placeholder="Select Product"
-                value={field.value}
-                multiple={false}
-                onChange={(e) => field.onChange(e.target.value)}
+                keyValuePair={["id", "productName"]}
+                placeholder="Select Products"
+                value={field.value?.map((p) => p.id) || []} // 👈 show selected ids
+                multiple={true}
+                onChange={(e) => {
+                  const selectedIds = e.target.value;
+
+                  const selectedProducts = products?.data?.data?.content
+                    ?.filter((item) => selectedIds.includes(item.id))
+                    .map((item) => ({
+                      id: item.id,
+                      productName: item.productName,
+                    }));
+
+                  field.onChange(selectedProducts);
+                }}
                 errormsg={errors.product?.message}
                 width="200px"
                 maxWidth="200px"
@@ -142,24 +166,24 @@ const AddInventory = ({ setOpen, getapi }) => {
             )}
           />
 
-          {/* Quantity */}
+          {/* ✅ Amount */}
           <Controller
-            name="quantity"
+            name="amount"
             control={control}
             render={({ field }) => (
               <CustomFormInput
-                label="Quantity"
+                label="Amount"
                 type="number"
                 {...field}
-                errormsg={errors.quantity?.message}
-                className={"!w-auto"}
-                direction={"col"}
+                errormsg={errors.amount?.message}
+                className="!w-auto"
+                direction="col"
               />
             )}
           />
 
-          {/* Submit */}
-          <div className="flex justify-center">
+          {/* ✅ Submit Button */}
+          <div className="flex justify-center pt-2">
             <Button text="Submit" type="submit" />
           </div>
         </form>
@@ -168,4 +192,4 @@ const AddInventory = ({ setOpen, getapi }) => {
   );
 };
 
-export default AddInventory;
+export default AddRetailerOrder;

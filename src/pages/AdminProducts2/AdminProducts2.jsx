@@ -1,58 +1,12 @@
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useReducer } from "react";
 import Header from "../../layouts/Header";
 import { TableComponent, TableRow } from "../../components/Table/Table";
 import { apiReducer, initialState } from "../../services/apiReducer";
 import useApiServices from "../../services/apiServices";
 import apiEndPoints from "../../services/apiEndPoints";
-import Popup from "../../components/Popups/Popup";
-import ThreeDotMenu from "./../../components/ThreeDotMenu/ThreeDotMenu";
-import InventoryForm2 from "./InventoryForm2";
-import useRouteInformation from "../../Hooks/useRouteInformation";
 
-const EachItem = ({ item }) => {
-  const [showPopup, setPopup] = useState(false);
-  return (
-    <TableRow
-      key={item.id}
-      elements={[
-        item.id,
-        item.stateId,
-        item.quantity,
-        item.date || "---",
-        item.status || "---",
-        "---",
-        <div>
-          <ThreeDotMenu
-            items={[
-              { label: "Add Inventory" },
-              {
-                label: "Cancel",
-              },
-            ]}
-            onSelect={(item) =>
-              item.label === "Add Inventory" && setPopup(true)
-            }
-          />
-          <Popup
-            open={showPopup}
-            title="Add Inventory"
-            content={<InventoryForm2 />}
-            primaryText="Agree"
-            secondaryText="Disagree"
-            onPrimary={() => {
-              console.log("Agreed");
-              setPopup(false);
-            }}
-            onSecondary={() => setPopup(false)}
-          />
-        </div>,
-        //   <IconButton>
-        //     <Icon icon={iconifyIcons.threeDots} />
-        //   </IconButton>,
-      ]}
-    />
-  );
-};
+import useRouteInformation from "../../Hooks/useRouteInformation";
+import Admin2EachItem from "./Admin2EachItem";
 
 const AdminProducts2 = () => {
   const [apiState, apiDispatch] = useReducer(apiReducer, initialState);
@@ -76,8 +30,6 @@ const AdminProducts2 = () => {
     getReqs();
   }, []);
 
-  //   console.log(apiState);
-
   return (
     <div>
       <Header title="Admin " />
@@ -91,7 +43,7 @@ const AdminProducts2 = () => {
         size={20}
       >
         {apiState?.data?.data?.content?.map((item) => (
-          <EachItem item={item} />
+          <Admin2EachItem item={item} />
         ))}
       </TableComponent>
     </div>
