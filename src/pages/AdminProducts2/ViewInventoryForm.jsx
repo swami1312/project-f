@@ -34,6 +34,7 @@ const ViewInventoryForm = React.forwardRef((_, ref) => {
   const [decision, setDecision] = React.useState(""); // APPROVED / REJECTED
   const [remarks, setRemarks] = React.useState("");
   const [selectedID, setselectedID] = React.useState();
+  const [selectedPdfUrl, setSelectedPdfUrl] = React.useState("");
   const [data, setdata] = React.useState({
     id: "--",
     productId: "--",
@@ -43,7 +44,6 @@ const ViewInventoryForm = React.forwardRef((_, ref) => {
     status: "-",
     date: "-",
   });
-  console.log(inventory);
 
   const validate = () => {
     const newErrors = {};
@@ -93,81 +93,18 @@ const ViewInventoryForm = React.forwardRef((_, ref) => {
     }
   };
 
-  // Memoize the StatusPopup component to prevent unnecessary re-renders
-  const StatusPopup = React.useMemo(() => {
-    return ({ decision, setDecision, remarks, setRemarks }) => {
-      const handleDecisionChange = (e) => {
-        setDecision(e.target.value);
-      };
-
-      const handleRemarksChange = (e) => {
-        setRemarks(e.target.value);
-      };
-
-      return (
-        <div className="space-y-4">
-          {/* RADIO BUTTONS */}
-          <div className="flex gap-6">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                name="decision"
-                value="APPROVED"
-                checked={decision === "APPROVED"}
-                onChange={handleDecisionChange}
-              />
-              <span className="text-green-600 font-medium">Approve</span>
-            </label>
-
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                name="decision"
-                value="REJECTED"
-                checked={decision === "REJECTED"}
-                onChange={handleDecisionChange}
-              />
-              <span className="text-red-600 font-medium">Reject</span>
-            </label>
-          </div>
-
-          {/* TEXTAREA - Use controlled input with ref */}
-          <div
-            style={{
-              opacity: decision === "REJECTED" ? 1 : 0.7,
-              pointerEvents: decision === "REJECTED" ? "auto" : "none",
-            }}
-          >
-            <TextField
-              label="Rejection Reason"
-              placeholder="Enter rejection reason"
-              multiline
-              rows={4}
-              fullWidth
-              size="small"
-              value={remarks}
-              onChange={handleRemarksChange}
-              disabled={decision !== "REJECTED"}
-              sx={{
-                "& .MuiInputBase-root": {
-                  backgroundColor:
-                    decision === "REJECTED" ? "transparent" : "#f5f5f5",
-                },
-                "& .MuiInputBase-input": {
-                  color: decision === "REJECTED" ? "inherit" : "#999",
-                },
-              }}
-              helperText={
-                decision === "REJECTED"
-                  ? "Required for rejection"
-                  : "Only required when rejecting"
-              }
-            />
-          </div>
-        </div>
-      );
-    };
-  }, []); // Empty dependency array means this component is created once
+  const handleOpenPdfWithDecision = (pdfUrl, rowId, rowStatus) => {
+    if (rowStatus === "PENDING") {
+      setSelectedPdfUrl(pdfUrl);
+      setselectedID(rowId);
+      setDecision("");
+      setRemarks("");
+      setShowPopup(true);
+    } else {
+      // If not PENDING, just open PDF in new tab
+      window.open(pdfUrl, "_blank", "noopener,noreferrer");
+    }
+  };
 
   const handleSubmitDecision = () => {
     if (decision === "REJECTED" && !remarks.trim()) {
@@ -190,6 +127,12 @@ const ViewInventoryForm = React.forwardRef((_, ref) => {
           setShowPopup(false);
           setDecision("");
           setRemarks("");
+          // Update the inventory list
+          setInventory((prev) =>
+            prev.map((item) =>
+              item.id === selectedID ? { ...item, status: decision } : item
+            )
+          );
           getuserLhApiCall();
         }
       },
@@ -218,6 +161,7 @@ const ViewInventoryForm = React.forwardRef((_, ref) => {
       },
     });
   };
+
   React.useImperativeHandle(ref, () => inventory);
 
   const getEachProduct = () => {
@@ -231,6 +175,7 @@ const ViewInventoryForm = React.forwardRef((_, ref) => {
       },
     });
   };
+
   const getuserLhApiCall = () => {
     get({
       apiUrl: apiEndPoints.getUserLh({
@@ -310,19 +255,92 @@ const ViewInventoryForm = React.forwardRef((_, ref) => {
     }
   };
 
-  // Create a memoized version of the popup content
+  // PDF Viewer and Decision Form Content
   const popupContent = React.useMemo(() => {
-    if (!showPopup) return null;
+    if (!showPopup || !selectedPdfUrl) return null;
 
     return (
-      <StatusPopup
-        decision={decision}
-        setDecision={setDecision}
-        remarks={remarks}
-        setRemarks={setRemarks}
-      />
+      <div className="flex flex-col h-full">
+        {/* PDF Viewer */}
+        <div className="flex-1 mb-4 border rounded-lg overflow-hidden">
+          <iframe
+            src={selectedPdfUrl}
+            title="PDF Viewer"
+            className="w-full h-full min-h-[400px]"
+            frameBorder="0"
+          />
+        </div>
+
+        {/* Decision Form */}
+        <div className="border-t pt-4">
+          <h4 className="text-lg font-semibold mb-3">
+            Approve/Reject Inventory
+          </h4>
+
+          <div className="space-y-4">
+            {/* Radio buttons for decision */}
+            <div className="flex gap-6">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="decision"
+                  value="APPROVED"
+                  checked={decision === "APPROVED"}
+                  onChange={(e) => setDecision(e.target.value)}
+                />
+                <span className="text-green-600 font-medium">Approve</span>
+              </label>
+
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="decision"
+                  value="REJECTED"
+                  checked={decision === "REJECTED"}
+                  onChange={(e) => setDecision(e.target.value)}
+                />
+                <span className="text-red-600 font-medium">Reject</span>
+              </label>
+            </div>
+
+            {/* Rejection reason textarea */}
+            <div
+              style={{
+                opacity: decision === "REJECTED" ? 1 : 0.7,
+                pointerEvents: decision === "REJECTED" ? "auto" : "none",
+              }}
+            >
+              <TextField
+                label="Rejection Reason"
+                placeholder="Enter rejection reason"
+                multiline
+                rows={3}
+                fullWidth
+                size="small"
+                value={remarks}
+                onChange={(e) => setRemarks(e.target.value)}
+                disabled={decision !== "REJECTED"}
+                sx={{
+                  "& .MuiInputBase-root": {
+                    backgroundColor:
+                      decision === "REJECTED" ? "transparent" : "#f5f5f5",
+                  },
+                  "& .MuiInputBase-input": {
+                    color: decision === "REJECTED" ? "inherit" : "#999",
+                  },
+                }}
+                helperText={
+                  decision === "REJECTED"
+                    ? "Required for rejection"
+                    : "Only required when rejecting"
+                }
+              />
+            </div>
+          </div>
+        </div>
+      </div>
     );
-  }, [showPopup, decision, remarks, StatusPopup]);
+  }, [showPopup, selectedPdfUrl, decision, remarks]);
 
   return (
     <div>
@@ -388,7 +406,7 @@ const ViewInventoryForm = React.forwardRef((_, ref) => {
                 <th>Serial No</th>
                 <th>File</th>
                 <th>Status</th>
-                <th>Act</th>
+                {/* <th>Act</th> */}
               </tr>
             </thead>
 
@@ -400,10 +418,13 @@ const ViewInventoryForm = React.forwardRef((_, ref) => {
                   <td>
                     <IconButton
                       size="small"
-                      component="a"
-                      href={row.latterHeadImageUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      onClick={() =>
+                        handleOpenPdfWithDecision(
+                          row.latterHeadImageUrl,
+                          row.id,
+                          row.status
+                        )
+                      }
                     >
                       <Icon icon="catppuccin:pdf" width={20} />
                     </IconButton>
@@ -430,36 +451,47 @@ const ViewInventoryForm = React.forwardRef((_, ref) => {
                       />
                     )}
                   </td>
-                  <td>
-                    <IconButton
-                      size="small"
-                      onClick={() => {
-                        setselectedID(row.id);
-                        setShowPopup(true);
-                      }}
-                    >
-                      <Icon icon="material-symbols:edit-outline" width={20} />
-                    </IconButton>
-                  </td>
+                  {/* <td>
+                    {row.status === "PENDING" && (
+                      <IconButton
+                        size="small"
+                        onClick={() =>
+                          handleOpenPdfWithDecision(
+                            row.latterHeadImageUrl,
+                            row.id,
+                            row.status
+                          )
+                        }
+                      >
+                        <Icon icon="material-symbols:edit-outline" width={20} />
+                      </IconButton>
+                    )}
+                  </td> */}
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
       )}
+
+      {/* Popup for PDF viewing and decision making */}
       <Popup
         open={showPopup}
-        title="Update Inventory Status"
+        title="PDF Viewer & Decision"
         content={popupContent}
-        primaryText="Submit"
-        secondaryText="Cancel"
+        primaryText="Submit Decision"
+        secondaryText="Close"
         onPrimary={handleSubmitDecision}
         onSecondary={() => {
           setShowPopup(false);
           setDecision("");
           setRemarks("");
+          setSelectedPdfUrl("");
           setselectedID(null);
         }}
+        maxWidth="lg"
+        fullWidth
+        size="large"
       />
     </div>
   );
