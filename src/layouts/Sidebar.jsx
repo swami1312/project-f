@@ -29,7 +29,15 @@ const Sidebar = () => {
   ];
 
   const NavItem = ({ item }) => {
-    const isActive = pathname === item.id;
+    // Normalize paths by removing trailing slashes for consistent comparison
+    const currentPath = pathname.endsWith("/")
+      ? pathname.slice(0, -1)
+      : pathname;
+    const itemPath = item.id.endsWith("/") ? item.id.slice(0, -1) : item.id;
+
+    // Check if current path is exactly the item path or a child/sub-route of it
+    const isActive =
+      currentPath === itemPath || currentPath.startsWith(itemPath + "/");
 
     return e(
       "button",

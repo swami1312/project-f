@@ -15,7 +15,7 @@ const Admin2EachItem = ({ item }) => {
         item.quantity,
         item.date || "---",
         item.status || "---",
-        "---",
+        item.productCode || item.productId,
         <div>
           <ThreeDotMenu
             items={[{ label: "View", value: "view" }]}

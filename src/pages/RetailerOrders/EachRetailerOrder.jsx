@@ -11,7 +11,10 @@ const EachRetailerOrder = ({ item, index }) => {
           item.stateId,
           item?.orderItemsRequestList?.length
             ? item.orderItemsRequestList
-                .map((eachProduct) => eachProduct?.productId)
+                .map(
+                  (eachProduct) =>
+                    eachProduct?.productCode || eachProduct?.productId
+                )
                 .join(", ")
             : "--",
           item?.totalAmount || "--",

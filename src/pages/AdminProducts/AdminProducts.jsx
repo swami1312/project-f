@@ -13,7 +13,15 @@ const AdminProducts = () => {
   const { get } = useApiServices();
   const { queryParams } = useRouteInformation();
 
-  const headers = ["Id", "State", "Qty", "Date", "Status", "Tenant", "Act"];
+  const headers = [
+    "Id",
+    "State",
+    "Qty",
+    "Date",
+    "Status",
+    "Product Code",
+    "Act",
+  ];
 
   const getReqs = () => {
     get({

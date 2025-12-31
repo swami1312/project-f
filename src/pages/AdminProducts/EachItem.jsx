@@ -22,7 +22,8 @@ const EachItem = ({ item }) => {
         item.quantity,
         item.date || "---",
         item.status || "---",
-        "---",
+        item.productCode || item.productId,
+
         <div>
           <ThreeDotMenu
             items={[

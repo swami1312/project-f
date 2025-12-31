@@ -9,7 +9,7 @@ const EachInventory = ({ item, index }) => {
         elements={[
           index + 1,
           item.stateId,
-          item?.productId || "--",
+          item?.productCode || item?.productId || "--",
           item?.quantity || "--",
           item?.date || "--",
           item?.status || "--",
