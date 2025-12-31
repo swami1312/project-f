@@ -29,11 +29,10 @@ const AddInventory = ({ setOpen, getapi }) => {
   // ✅ Validation Schema
   const schema = Yup.object().shape({
     state: Yup.string().required("State is required"),
-    product: Yup.string().required("Product is required"),
+    product: Yup.object().required("Product is required"),
     quantity: Yup.number()
       .required("Quantity is required")
       .positive("Must be positive"),
-    // .integer("Must be a whole number"),
   });
 
   const {
@@ -57,7 +56,8 @@ const AddInventory = ({ setOpen, getapi }) => {
 
   const onSubmit = (data) => {
     const payload = {
-      productId: data.product,
+      productId: data.product.productId,
+      productCode: data.product.stateProductCode,
       quantity: data.quantity,
       retailerId: "R-0001",
       stateId: data.state,
@@ -80,7 +80,6 @@ const AddInventory = ({ setOpen, getapi }) => {
     });
   };
 
-  // Fetch states on initial load
   useEffect(() => {
     get({
       apiUrl: apiEndPoints.getStatesList(),
@@ -175,12 +174,16 @@ const AddInventory = ({ setOpen, getapi }) => {
                 <CustomMultiSelect
                   label="Product"
                   items={products?.data?.data?.content || []}
-                  keyValuePair={["stateProductCode", "stateProductCode"]}
+                  keyValuePair={["productId", "stateProductCode"]}
                   placeholder="Select Product"
-                  value={field.value}
+                  value={field.value.productId}
                   multiple={false}
                   onChange={(e) => {
-                    field.onChange(e.target.value);
+                    const selectedProduct = products?.data?.data?.content?.find(
+                      (item) => item.productId === e.target.value
+                    );
+
+                    field.onChange(selectedProduct);
                   }}
                   errormsg={errors.product?.message}
                   width="200px"

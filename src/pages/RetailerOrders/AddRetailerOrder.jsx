@@ -81,6 +81,7 @@ const AddRetailerOrder = ({ setOpen, getapi }) => {
         productId: eachProduct.id,
         productName: eachProduct.stateProductCode,
         quantity: 1,
+        productCode: eachProduct.stateProductCode,
       })),
       totalAmount: data.amount,
       retailerId: "R-0001",
@@ -206,7 +207,8 @@ const AddRetailerOrder = ({ setOpen, getapi }) => {
                           ?.filter((item) => selectedIds.includes(item.id))
                           .map((item) => ({
                             id: item.id,
-                            productName: item.stateProductCode,
+                            stateProductCode: item.stateProductCode,
+                            productId: item.productId,
                           }));
 
                         field.onChange(selectedProducts);

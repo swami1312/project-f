@@ -17,7 +17,7 @@ const App = () => {
     <Routes>
       {/* Layout wrapper */}
       <Route element={<AppLayout />}>
-        <Route path="/" element={<Navigate to="/inventory" />} />
+        <Route path="/" element={<Navigate to="/user-inventory" />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/user-orders" element={<RetailerOrders />} />
         <Route path="/generate-invoice" element={<GenerateInvoice />} />

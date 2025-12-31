@@ -147,35 +147,35 @@ export const CustomFormInput = ({
         </Label>
       )}
 
-      {/* <div className="w-full flex flex-col"> */}
-      {children ||
-        (textarea ? (
-          <TextArea
-            {...registerevents}
-            onChange={(e) => {
-              registerevents?.onChange(e);
-              onChange && onChange(e);
-            }}
-            rows={rows}
-            placeholder={placeholder}
-            className={`${commonInputStyle + className}`}
-            disabled={disable}
-          />
-        ) : (
-          <input
-            {...registerevents}
-            onChange={(e) => {
-              registerevents?.onChange(e);
-              onChange && onChange(e);
-            }}
-            type={type}
-            placeholder={placeholder}
-            className={`${commonInputStyle + className}`}
-            disabled={disable}
-          />
-        ))}
-      {errormsg && <ErrorMsg>{errormsg}</ErrorMsg>}
-      {/* </div> */}
+      <div className=" flex flex-col">
+        {children ||
+          (textarea ? (
+            <TextArea
+              {...registerevents}
+              onChange={(e) => {
+                registerevents?.onChange(e);
+                onChange && onChange(e);
+              }}
+              rows={rows}
+              placeholder={placeholder}
+              className={`${commonInputStyle + className}`}
+              disabled={disable}
+            />
+          ) : (
+            <input
+              {...registerevents}
+              onChange={(e) => {
+                registerevents?.onChange(e);
+                onChange && onChange(e);
+              }}
+              type={type}
+              placeholder={placeholder}
+              className={`${commonInputStyle + className}`}
+              disabled={disable}
+            />
+          ))}
+        {errormsg && <ErrorMsg>{errormsg}</ErrorMsg>}
+      </div>
     </InputContainer>
   );
 };
