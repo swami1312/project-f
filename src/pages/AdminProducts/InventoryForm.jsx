@@ -132,8 +132,8 @@ const InventoryForm = React.forwardRef((_, ref) => {
   const submit = async () => {
     const uploadedItems = inventory.filter((item) => item.pdf);
 
-    if (uploadedItems.length === 0) {
-      toast.error("Please upload at least one PDF");
+    if (inventory.length !== uploadedItems.length) {
+      toast.error("Please upload all PDF Files");
       return;
     }
 
@@ -150,6 +150,7 @@ const InventoryForm = React.forwardRef((_, ref) => {
                   retailerSerialNumber: each.id,
                   latterHeadImageUrl: each.pdf,
                   currentMonth: getDateYYYYMMDD(),
+                  userId: data.retailerId,
                   latterHeadContent: "",
                   tenantId: "T1",
                   productCode: data.productCode,

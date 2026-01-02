@@ -25,7 +25,7 @@ const RetailerOrders = () => {
     setOpen(newOpen);
   };
 
-  const headers = ["ID", "State", "Amount", "Date"];
+  const headers = ["ID", "UserName", "State", "Amount", "Quantity", "Date"];
 
   const getRetailerOrders = () => {
     get({
@@ -49,7 +49,7 @@ const RetailerOrders = () => {
       <TableComponent
         headers={headers}
         apiState={RetailerOrdersApiState}
-        colSpan={10}
+        colSpan={6}
         itemsLength={RetailerOrdersApiState?.data?.data?.content?.length}
         className="!max-h-[60vh] overflow-y-auto"
         totalPages={RetailerOrdersApiState?.data?.data?.totalPages}

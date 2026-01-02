@@ -32,12 +32,13 @@ const ViewInventoryForm = React.forwardRef((_, ref) => {
   const fileFormData = React.useRef(null);
   const { post, get, put } = useApiServices();
   const { handleResponse } = useHandleResponse();
-  const { pathParams } = useRouteInformation();
+  const { pathParams, navigate } = useRouteInformation();
   const [showPopup, setShowPopup] = React.useState(false);
   const [decision, setDecision] = React.useState(""); // APPROVED / REJECTED
   const [remarks, setRemarks] = React.useState("");
   const [selectedID, setselectedID] = React.useState();
   const [selectedPdfUrl, setSelectedPdfUrl] = React.useState("");
+
   const [data, setdata] = React.useState({
     id: "--",
     productId: "--",
@@ -189,6 +190,21 @@ const ViewInventoryForm = React.forwardRef((_, ref) => {
       callBackFunction: (res) => {
         if (res.success) {
           setInventory(res.data.content);
+        }
+        if (res.data.content.length === 0) {
+          put({
+            apiUrl: apiEndPoints.updateRetailerLockReq(pathParams.riID),
+            body: {
+              tenantId: "T1",
+              status: "CONFIRM",
+            },
+            callBackFunction: (res) => {
+              if (res.success) {
+                toast.success("Inventory updated successfully");
+                navigate("/admin/products-2");
+              }
+            },
+          });
         }
       },
     });

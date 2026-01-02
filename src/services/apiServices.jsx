@@ -181,7 +181,7 @@ const useApiServices = () => {
                 : type === "m"
                 ? "multipart/form-data"
                 : "application/json",
-            "ACIN-API-KEY": "ACIN-SDGESDFYRGFSDF",
+            // "ACIN-API-KEY": "ACIN-SDGESDFYRGFSDF",
           },
           responseType: responseType || "json",
         };

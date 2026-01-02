@@ -8,8 +8,12 @@ const EachRetailerOrder = ({ item, index }) => {
         key={item.id}
         elements={[
           item.orderId,
+          item.userName,
           item.stateCode,
           item?.totalAmount || "--",
+          (item?.orderItemsRequestList.length &&
+            item?.orderItemsRequestList[0].quantity) ||
+            "--",
           convertWeirdDateToDDMMYY(item?.orderCreatedDate) || "--",
         ]}
       />
