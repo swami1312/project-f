@@ -26,7 +26,7 @@ const AdminProducts = () => {
   const getReqs = () => {
     get({
       apiUrl: apiEndPoints.getProductLockReqs({
-        // status: 'PENDING',
+        status: "PENDING",
         page: queryParams.page || 0,
         size: 20,
       }),
@@ -36,9 +36,7 @@ const AdminProducts = () => {
 
   useEffect(() => {
     getReqs();
-  }, []);
-
-  //   console.log(apiState);
+  }, [queryParams.page]);
 
   return (
     <div>
@@ -46,9 +44,9 @@ const AdminProducts = () => {
       <TableComponent
         headers={headers}
         apiState={apiState}
-        colSpan={10}
+        colSpan={7}
         itemsLength={apiState?.data?.data?.content?.length}
-        className="!max-h-[50vh] overflow-y-auto"
+        className="!max-h-[60vh] overflow-y-auto"
         totalPages={apiState?.data?.data?.totalPages}
         size={20}
       >

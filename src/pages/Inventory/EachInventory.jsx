@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { TableRow } from "../../components/Table/Table";
+import { convertWeirdDateToDDMMYY } from "../../utils/functions";
 
 const EachInventory = ({ item, index }) => {
   return (
@@ -7,11 +7,11 @@ const EachInventory = ({ item, index }) => {
       <TableRow
         key={item.id}
         elements={[
-          index + 1,
-          item.stateId,
-          item?.productCode || item?.productId || "--",
+          item.id,
+          item.stateCode,
+          item?.productCode || "--",
           item?.quantity || "--",
-          item?.date || "--",
+          convertWeirdDateToDDMMYY(item?.date) || "--",
           item?.status || "--",
         ]}
       />

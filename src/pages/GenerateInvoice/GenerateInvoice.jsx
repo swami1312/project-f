@@ -141,7 +141,7 @@ const GenerateInvoice = () => {
       creditPeriod,
       returnsNotExceeding,
     } = data;
-    console.log("Invoice Form Data:", data);
+
     const formattedDate = new Date(date).toLocaleDateString("en-IN");
 
     const productNames = products

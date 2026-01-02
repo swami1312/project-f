@@ -5,17 +5,16 @@ import ThreeDotMenu from "../../components/ThreeDotMenu/ThreeDotMenu";
 
 const Admin2EachItem = ({ item }) => {
   const { navigate, pathname } = useRouteInformation();
-  console.log(pathname);
   return (
     <TableRow
       key={item.id}
       elements={[
         item.id,
-        item.stateId,
+        item.stateCode,
         item.quantity,
         item.date || "---",
         item.status || "---",
-        item.productCode || item.productId,
+        item.productCode || "---",
         <div>
           <ThreeDotMenu
             items={[{ label: "View", value: "view" }]}
@@ -32,7 +31,7 @@ const Admin2EachItem = ({ item }) => {
             primaryText="Agree"
             secondaryText="Disagree"
             onPrimary={() => {
-              console.log("Agreed");
+
               setPopup(false);
             }}
             onSecondary={() => setPopup(false)}

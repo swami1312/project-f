@@ -57,7 +57,7 @@ const Inventory = () => {
         apiState={apiState}
         colSpan={10}
         itemsLength={apiState?.data?.data?.content?.length}
-        className="!max-h-[45vh] overflow-y-auto"
+        className="!max-h-[90vh] overflow-y-auto"
         totalPages={apiState?.data?.data?.totalPages}
         size={20}
       >

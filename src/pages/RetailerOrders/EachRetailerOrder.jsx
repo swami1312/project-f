@@ -1,24 +1,16 @@
 import { TableRow } from "../../components/Table/Table";
+import { convertWeirdDateToDDMMYY } from "../../utils/functions";
 
 const EachRetailerOrder = ({ item, index }) => {
-  console.log(item.orderItemsRequestList);
   return (
     <>
       <TableRow
         key={item.id}
         elements={[
-          index + 1,
-          item.stateId,
-          item?.orderItemsRequestList?.length
-            ? item.orderItemsRequestList
-                .map(
-                  (eachProduct) =>
-                    eachProduct?.productCode || eachProduct?.productId
-                )
-                .join(", ")
-            : "--",
+          item.orderId,
+          item.stateCode,
           item?.totalAmount || "--",
-          item?.date || "--",
+          convertWeirdDateToDDMMYY(item?.orderCreatedDate) || "--",
         ]}
       />
     </>

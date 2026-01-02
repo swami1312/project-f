@@ -62,6 +62,7 @@ const AddInventory = ({ setOpen, getapi }) => {
       retailerId: "R-0001",
       stateId: data.state,
       status: "PENDING",
+      tenantId: "T1",
     };
 
     post({

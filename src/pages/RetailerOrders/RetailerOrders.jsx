@@ -9,12 +9,14 @@ import apiEndPoints from "../../services/apiEndPoints";
 
 import AddRetailerOrder from "./AddRetailerOrder";
 import EachRetailerOrder from "./EachRetailerOrder";
+import useRouteInformation from "../../Hooks/useRouteInformation";
 
 const RetailerOrders = () => {
   const [RetailerOrdersApiState, RetailerOrdersApiDispatc] = useReducer(
     apiReducer,
     initialState
   );
+  const { queryParams } = useRouteInformation();
 
   const { get } = useApiServices();
   const [open, setOpen] = React.useState(false);
@@ -23,18 +25,20 @@ const RetailerOrders = () => {
     setOpen(newOpen);
   };
 
-  const headers = ["ID", "State", "Product", "Amount", "Date"];
+  const headers = ["ID", "State", "Amount", "Date"];
 
   const getRetailerOrders = () => {
     get({
-      apiUrl: apiEndPoints.getAllRetailersOrders(),
+      apiUrl: apiEndPoints.getAllRetailersOrders({
+        page: queryParams.page || 0,
+      }),
       apiDispatch: RetailerOrdersApiDispatc,
     });
   };
 
   useEffect(() => {
     getRetailerOrders();
-  }, []);
+  }, [queryParams.page]);
 
   return (
     <div>
@@ -47,7 +51,7 @@ const RetailerOrders = () => {
         apiState={RetailerOrdersApiState}
         colSpan={10}
         itemsLength={RetailerOrdersApiState?.data?.data?.content?.length}
-        className="!max-h-[45vh] overflow-y-auto"
+        className="!max-h-[60vh] overflow-y-auto"
         totalPages={RetailerOrdersApiState?.data?.data?.totalPages}
         size={20}
       >

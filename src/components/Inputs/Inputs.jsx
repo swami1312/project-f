@@ -211,7 +211,7 @@ export const CustomSelect = ({
                 onChange: (e) => {
                   const selectedOption =
                     e.target.options[e.target.selectedIndex];
-                  console.log(selectedOption);
+
                   onChange({
                     target: {
                       value: e.target.value,

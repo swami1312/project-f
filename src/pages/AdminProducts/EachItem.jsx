@@ -18,11 +18,11 @@ const EachItem = ({ item }) => {
       key={item.id}
       elements={[
         item.id,
-        item.stateId,
+        item.stateCode,
         item.quantity,
         item.date || "---",
         item.status || "---",
-        item.productCode || item.productId,
+        item.productCode || "---",
 
         <div>
           <ThreeDotMenu

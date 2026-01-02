@@ -36,7 +36,7 @@ const AdminProducts2 = () => {
 
   useEffect(() => {
     getReqs();
-  }, []);
+  }, [queryParams.page]);
 
   return (
     <div>

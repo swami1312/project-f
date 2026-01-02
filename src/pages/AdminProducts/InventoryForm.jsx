@@ -10,7 +10,10 @@ import useHandleResponse from "../../Hooks/useHandleResponse";
 import useRouteInformation from "../../Hooks/useRouteInformation";
 import { apiReducer, initialState } from "../../services/apiReducer";
 import { toast } from "react-toastify";
-import { getDateYYYYMMDD } from "../../utils/functions";
+import {
+  convertWeirdDateToDDMMYY,
+  getDateYYYYMMDD,
+} from "../../utils/functions";
 
 const InventoryForm = React.forwardRef((_, ref) => {
   const [updateState, updateDispatch] = React.useReducer(
@@ -27,7 +30,7 @@ const InventoryForm = React.forwardRef((_, ref) => {
   const fileFormData = React.useRef(null);
   const { post, get, put } = useApiServices();
   const { handleResponse } = useHandleResponse();
-  const { pathParams } = useRouteInformation();
+  const { pathParams, navigate } = useRouteInformation();
   const [data, setdata] = React.useState({
     id: "--",
     productId: "--",
@@ -35,6 +38,7 @@ const InventoryForm = React.forwardRef((_, ref) => {
     retailerId: "--",
     stateId: "-",
     status: "-",
+    productCode: "--",
     date: "-",
   });
 
@@ -89,7 +93,7 @@ const InventoryForm = React.forwardRef((_, ref) => {
   const fileupload = (fileFormData, id) => {
     post({
       apiUrl: apiEndPoints.postPdf({
-        productId: data.productId,
+        productCode: data.productCode,
         tenantId: "T1",
         latterHeadSerialNumber: id,
       }),
@@ -148,6 +152,7 @@ const InventoryForm = React.forwardRef((_, ref) => {
                   currentMonth: getDateYYYYMMDD(),
                   latterHeadContent: "",
                   tenantId: "T1",
+                  productCode: data.productCode,
                 },
                 apiDispatch: updateDispatch,
                 callBackFunction: (res) => {
@@ -167,11 +172,12 @@ const InventoryForm = React.forwardRef((_, ref) => {
         apiUrl: apiEndPoints.updateRetailerLockReq(data.id),
         body: {
           ...data,
+          tenantId: "T1",
           status: "ADDED-INV",
         },
       });
-
       toast.success("Inventory updated successfully");
+      navigate("/admin/products-1");
     } catch (error) {
       toast.error("Failed to upload inventory. Please try again.");
     }
@@ -208,8 +214,10 @@ const InventoryForm = React.forwardRef((_, ref) => {
 
           {/* Product ID */}
           <div className="flex min-w-[140px]">
-            <span className="font-medium text-gray-700 w-24">Product ID:</span>
-            <span className="break-words">{data.productId}</span>
+            <span className="font-medium text-gray-700 w-24">
+              Product Code:
+            </span>
+            <span className="break-words">{data.productCode}</span>
           </div>
 
           {/* Quantity */}
@@ -220,14 +228,14 @@ const InventoryForm = React.forwardRef((_, ref) => {
 
           {/* State ID */}
           <div className="flex min-w-[140px]">
-            <span className="font-medium text-gray-700 w-24">State ID:</span>
-            <span>{data.stateId}</span>
+            <span className="font-medium text-gray-700 w-24">State Code:</span>
+            <span>{data.stateCode}</span>
           </div>
 
           {/* Date */}
           <div className="flex min-w-[140px]">
             <span className="font-medium text-gray-700 w-24">Date:</span>
-            <span>{data.date}</span>
+            <span>{convertWeirdDateToDDMMYY(data.date)}</span>
           </div>
         </div>
       </div>

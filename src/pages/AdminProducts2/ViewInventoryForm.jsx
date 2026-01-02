@@ -10,7 +10,10 @@ import useHandleResponse from "../../Hooks/useHandleResponse";
 import useRouteInformation from "../../Hooks/useRouteInformation";
 import { apiReducer, initialState } from "../../services/apiReducer";
 import { toast } from "react-toastify";
-import { getDateYYYYMMDD } from "../../utils/functions";
+import {
+  convertWeirdDateToDDMMYY,
+  getDateYYYYMMDD,
+} from "../../utils/functions";
 import { Link } from "react-router-dom";
 import Popup from "../../components/Popups/Popup";
 
@@ -373,8 +376,10 @@ const ViewInventoryForm = React.forwardRef((_, ref) => {
 
           {/* Product ID */}
           <div className="flex min-w-[140px]">
-            <span className="font-medium text-gray-700 w-24">Product ID:</span>
-            <span className="break-words">{data.productId}</span>
+            <span className="font-medium text-gray-700 w-24">
+              Product Code:
+            </span>
+            <span className="break-words">{data.productCode}</span>
           </div>
 
           {/* Quantity */}
@@ -385,14 +390,14 @@ const ViewInventoryForm = React.forwardRef((_, ref) => {
 
           {/* State ID */}
           <div className="flex min-w-[140px]">
-            <span className="font-medium text-gray-700 w-24">State ID:</span>
-            <span>{data.stateId}</span>
+            <span className="font-medium text-gray-700 w-24">State Code:</span>
+            <span>{data.stateCode}</span>
           </div>
 
           {/* Date */}
           <div className="flex min-w-[140px]">
             <span className="font-medium text-gray-700 w-24">Date:</span>
-            <span>{data.date}</span>
+            <span>{convertWeirdDateToDDMMYY(data.date)}</span>
           </div>
         </div>
       </div>

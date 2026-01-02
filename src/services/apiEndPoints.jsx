@@ -19,7 +19,8 @@ const apiEndPoints = {
 
   // retailers orders
   postRetailerOrder: () => `${baseUrl}/api-order/place/order`,
-  getAllRetailersOrders: () => `${baseUrl}/api-order/orders`,
+  getAllRetailersOrders: (query) =>
+    `${baseUrl}/api-order/orders?${handleQueryParams(query)}`,
   postPdf: (query) => `${baseUrl}/upload?${handleQueryParams(query)}`,
 
   //admin 2

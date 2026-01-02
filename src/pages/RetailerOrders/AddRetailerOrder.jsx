@@ -27,12 +27,9 @@ const AddRetailerOrder = ({ setOpen, getapi }) => {
   // State for customer names
   const [customerNames, setCustomerNames] = useState(["", "", ""]);
 
-  // ✅ Update validation schema for customer names
   const schema = Yup.object().shape({
     state: Yup.string().required("State is required"),
-    product: Yup.array()
-      .min(1, "At least one product is required")
-      .required("Product is required"),
+
     amount: Yup.number()
       .typeError("Amount must be a number")
       .required("Amount is required")
@@ -54,9 +51,6 @@ const AddRetailerOrder = ({ setOpen, getapi }) => {
     },
   });
 
-  // Watch state value to fetch products when it changes
-  const selectedStateId = watch("state");
-
   // Handle customer name input changes
   const handleCustomerNameChange = (index, value) => {
     const newCustomerNames = [...customerNames];
@@ -64,9 +58,7 @@ const AddRetailerOrder = ({ setOpen, getapi }) => {
     setCustomerNames(newCustomerNames);
   };
 
-  // ✅ Submit Handler - Updated with customerNames
   const onSubmit = (data) => {
-    // Filter out empty customer names
     const validCustomerNames = customerNames.filter(
       (name) => name.trim() !== ""
     );
@@ -77,19 +69,12 @@ const AddRetailerOrder = ({ setOpen, getapi }) => {
     }
 
     const payload = {
-      orderItemsRequestList: data.product.map((eachProduct) => ({
-        productId: eachProduct.id,
-        productName: eachProduct.stateProductCode,
-        quantity: 1,
-        productCode: eachProduct.stateProductCode,
-      })),
       totalAmount: data.amount,
       retailerId: "R-0001",
       stateId: data.state,
-      customerNames: validCustomerNames, // Add customer names to payload
+      customerNames: validCustomerNames,
+      tenantId: "T1",
     };
-
-    console.log("Payload:", payload); // For debugging
 
     post({
       apiUrl: apiEndPoints.postRetailerOrder(),
@@ -115,24 +100,23 @@ const AddRetailerOrder = ({ setOpen, getapi }) => {
     });
   }, []);
 
-  // ✅ Fetch Products when state is selected
-  useEffect(() => {
-    if (selectedStateId) {
-      // Reset product selection when state changes
-      setValue("product", []);
+  // useEffect(() => {
+  //   if (selectedStateId) {
 
-      get({
-        apiUrl: apiEndPoints.getstateProductsList({
-          stateId: selectedStateId,
-        }),
-        apiDispatch: productsDispatch,
-      });
-    }
-  }, [selectedStateId]);
+  //     setValue("product", []);
+
+  //     get({
+  //       apiUrl: apiEndPoints.getstateProductsList({
+  //         stateId: selectedStateId,
+  //       }),
+  //       apiDispatch: productsDispatch,
+  //     });
+  //   }
+  // }, [selectedStateId]);
 
   // Check if products are loaded and empty
-  const hasProducts = products?.data?.data?.content?.length > 0;
-  const isProductsLoaded = !products.loading && products.data;
+  // const hasProducts = products?.data?.data?.content?.length > 0;
+  // const isProductsLoaded = !products.loading && products.data;
 
   return (
     <div className="flex h-full">
@@ -178,7 +162,7 @@ const AddRetailerOrder = ({ setOpen, getapi }) => {
             )}
           />
           {/* ✅ Product Multi Select - Show based on conditions */}
-          {selectedStateId && (
+          {/* {selectedStateId && (
             <div className="space-y-2">
               {products.loading ? (
                 <div className="text-center py-2 text-gray-500">
@@ -222,7 +206,7 @@ const AddRetailerOrder = ({ setOpen, getapi }) => {
                 />
               )}
             </div>
-          )}
+          )} */}
           {/* ✅ Customer Names Inputs */}
           <div className="space-y-3">
             <label className="block text-sm font-medium text-gray-700">
@@ -253,7 +237,7 @@ const AddRetailerOrder = ({ setOpen, getapi }) => {
             <Button
               text="Submit"
               type="submit"
-              disabled={postinventoryState.loading || !hasProducts}
+              disabled={postinventoryState.loading}
               loading={postinventoryState.loading}
             />
           </div>
