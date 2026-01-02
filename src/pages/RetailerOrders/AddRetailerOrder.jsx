@@ -18,6 +18,9 @@ const AddRetailerOrder = ({ setOpen, getapi }) => {
   const { get, post } = useApiServices();
 
   const [states, statesDispatch] = useReducer(apiReducer, initialState);
+  const [pdfUrl, setPdfUrl] = useState(null);
+  const [showPdfModal, setShowPdfModal] = useState(false);
+
   const [products, productsDispatch] = useReducer(apiReducer, initialState);
   const [postinventoryState, postinventoryDispatch] = useReducer(
     apiReducer,
@@ -58,6 +61,29 @@ const AddRetailerOrder = ({ setOpen, getapi }) => {
     setCustomerNames(newCustomerNames);
   };
 
+  const openBase64Pdf = (base64Data) => {
+    if (!base64Data) return;
+
+    const cleanBase64 = base64Data.replace(
+      /^data:application\/pdf;base64,/,
+      ""
+    );
+
+    const byteCharacters = atob(cleanBase64);
+    const byteNumbers = new Array(byteCharacters.length);
+
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: "application/pdf" });
+
+    const url = URL.createObjectURL(blob);
+    setPdfUrl(url); // store PDF
+    setShowPdfModal(false); // don’t auto open
+  };
+
   const onSubmit = (data) => {
     const validCustomerNames = customerNames.filter(
       (name) => name.trim() !== ""
@@ -83,8 +109,10 @@ const AddRetailerOrder = ({ setOpen, getapi }) => {
       callBackFunction: (res) => {
         if (res.success) {
           toast.success("Order created successfully");
-          setOpen(false);
-          getapi();
+          // setOpen(false);
+          // getapi();
+
+          openBase64Pdf(res.data.fileBase64);
         } else {
           toast.error(res.message || "Failed to create order");
         }
@@ -99,6 +127,12 @@ const AddRetailerOrder = ({ setOpen, getapi }) => {
       apiDispatch: statesDispatch,
     });
   }, []);
+
+  useEffect(() => {
+    return () => {
+      if (pdfUrl) URL.revokeObjectURL(pdfUrl);
+    };
+  }, [pdfUrl]);
 
   // useEffect(() => {
   //   if (selectedStateId) {
@@ -242,6 +276,44 @@ const AddRetailerOrder = ({ setOpen, getapi }) => {
             />
           </div>
         </form>
+        {pdfUrl && (
+          <div className="flex justify-center mt-4">
+            <Button
+              text="Preview Invoice"
+              type="button"
+              onClick={() => setShowPdfModal(true)}
+            />
+          </div>
+        )}
+
+        {showPdfModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-white rounded-xl shadow-xl w-[90%] h-[85%] flex flex-col">
+              {/* Header */}
+              <div className="flex justify-between items-center p-3 border-b">
+                <p className="font-semibold">Invoice Preview</p>
+                <button
+                  className="text-red-500 font-bold text-lg"
+                  onClick={() => {
+                    setShowPdfModal(false);
+                    setOpen(false);
+                    getapi();
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* PDF */}
+              <iframe
+                src={pdfUrl}
+                title="PDF Preview"
+                className="flex-1 w-full"
+                style={{ border: "none" }}
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
