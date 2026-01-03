@@ -1,27 +1,35 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { getClientStorage } from "../utils/functions";
 
 // Sidebar Layout Component - Main navigation sidebar
 const Sidebar = () => {
   const e = React.createElement;
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const cs = JSON.parse(getClientStorage());
 
-  const mainNavItems = [
-    {
-      id: "/generate-invoice",
-      label: "Generate Invoice",
-      icon: "fa-light fa-file-invoice",
-    },
-    { id: "/user-inventory", label: "User Inventory", icon: "fa-th-large" },
-    { id: "/user-orders", label: "User Orders", icon: "fa-shopping-bag" },
-    { id: "/admin/products-1", label: "Admin 1", icon: "fa-person" },
-    { id: "/admin/products-2", label: "Admin 2", icon: "fa-person" },
-    { id: "/dashboard", label: "Dashboard", icon: "fa-th-large" },
-    { id: "/payments", label: "Payments", icon: "fa-credit-card" },
-    { id: "/customers", label: "Customers", icon: "fa-users" },
-    // { id: "/statistic", label: "Statistic", icon: "fa-chart-pie" },
-  ];
+  const mainNavItems = {
+    USER: [
+      { id: "/user-inventory", label: "User Inventory", icon: "fa-th-large" },
+      { id: "/user-orders", label: "User Orders", icon: "fa-shopping-bag" },
+    ],
+    ADMIN1: [
+      // {
+      //   id: "/generate-invoice",
+      //   label: "Generate Invoice",
+      //   icon: "fa-light fa-file-invoice",
+      // },
+
+      { id: "/admin/products-1", label: "Admin 1", icon: "fa-person" },
+
+      // { id: "/dashboard", label: "Dashboard", icon: "fa-th-large" },
+      // { id: "/payments", label: "Payments", icon: "fa-credit-card" },
+      // { id: "/customers", label: "Customers", icon: "fa-users" },
+      // { id: "/statistic", label: "Statistic", icon: "fa-chart-pie" },
+    ],
+    ADMIN2: [{ id: "/admin/products-2", label: "Admin 2", icon: "fa-person" }],
+  };
 
   const secondaryNavItems = [
     { id: "/notification", label: "Notification", icon: "fa-bell" },
@@ -101,17 +109,19 @@ const Sidebar = () => {
       e(
         "div",
         { className: "space-y-1" },
-        mainNavItems.map((item) => e(NavItem, { key: item.id, item }))
+        (mainNavItems[cs?.role] || []).map((item) =>
+          e(NavItem, { key: item.id, item })
+        )
       ),
 
-      e("div", { className: "my-6 border-t border-gray-800" }),
+      e("div", { className: "my-6 border-t border-gray-800" })
 
       // Secondary Navigation
-      e(
-        "div",
-        { className: "space-y-1" },
-        secondaryNavItems.map((item) => e(NavItem, { key: item.id, item }))
-      )
+      // e(
+      //   "div",
+      //   { className: "space-y-1" },
+      //   secondaryNavItems.map((item) => e(NavItem, { key: item.id, item }))
+      // )
     ),
 
     // Logout
@@ -121,6 +131,9 @@ const Sidebar = () => {
       e(
         "button",
         {
+          onClick: () => {
+            sessionStorage.clear(), navigate("/login");
+          },
           className:
             "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors text-left",
         },

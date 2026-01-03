@@ -10,14 +10,17 @@ import AppLayout from "./layouts/AppLayout";
 import useRouteInformation from "./Hooks/useRouteInformation";
 import InventoryForm from "./pages/AdminProducts/InventoryForm";
 import ViewInventoryForm from "./pages/AdminProducts2/ViewInventoryForm";
+import Login from "./pages/Login/Login";
+import { defaultPathForNavigate } from "./Utils/constants";
 
 const App = () => {
   const { pathname } = useRouteInformation();
   return (
-    <Routes>
-      {/* Layout wrapper */}
-      <Route element={<AppLayout />}>
-        <Route path="/" element={<Navigate to="/user-inventory" />} />
+    <AppLayout>
+      <Routes>
+        {/* Layout wrapper */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Navigate to={defaultPathForNavigate()} />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/user-orders" element={<RetailerOrders />} />
         <Route path="/generate-invoice" element={<GenerateInvoice />} />
@@ -32,7 +35,6 @@ const App = () => {
           path="/admin/products-2/View-inventory/:riID"
           element={<ViewInventoryForm />}
         />
-
         {/* Fallback */}
         <Route
           path="*"
@@ -42,8 +44,8 @@ const App = () => {
             />
           }
         />
-      </Route>
-    </Routes>
+      </Routes>
+    </AppLayout>
   );
 };
 
