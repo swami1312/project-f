@@ -48,6 +48,7 @@ const ViewInventoryForm = React.forwardRef((_, ref) => {
     status: "-",
     date: "-",
   });
+  console.log(data);
 
   const validate = () => {
     const newErrors = {};
@@ -175,6 +176,7 @@ const ViewInventoryForm = React.forwardRef((_, ref) => {
       callBackFunction: (res) => {
         if (res.success) {
           setdata(res.data);
+          getuserLhApiCall();
         }
       },
     });
@@ -195,6 +197,7 @@ const ViewInventoryForm = React.forwardRef((_, ref) => {
           put({
             apiUrl: apiEndPoints.updateRetailerLockReq(pathParams.riID),
             body: {
+              ...data,
               tenantId: "T1",
               status: "CONFIRM",
             },
@@ -212,7 +215,6 @@ const ViewInventoryForm = React.forwardRef((_, ref) => {
 
   React.useEffect(() => {
     getEachProduct();
-    getuserLhApiCall();
   }, []);
 
   // Clear remarks when decision changes from REJECTED to APPROVED
@@ -500,7 +502,7 @@ const ViewInventoryForm = React.forwardRef((_, ref) => {
         open={showPopup}
         title="PDF Viewer & Decision"
         content={popupContent}
-        primaryText="Submit Decision"
+        primaryText="Submit"
         secondaryText="Close"
         onPrimary={handleSubmitDecision}
         onSecondary={() => {
